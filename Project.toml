@@ -3,6 +3,14 @@ uuid = "26fe1022-4504-4e51-8d8d-17afb7a72451"
 authors = ["Roger Mateer <rogermateer@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+GZip = "92fee26a-97fe-5a0c-ad85-20a5f3185b63"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+StructTypes = "856f2bd8-1eba-4b0a-8007-ebc267875bd4"
+TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
+
 [compat]
 julia = "1.7"
 
