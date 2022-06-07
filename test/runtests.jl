@@ -24,8 +24,8 @@ end
 
 @testset ExtendedTestSet "Find all relevant files" begin
     relevantFiles = findFiles("../data","AlphaVantage","TIME_SERIES_DAILY","AAPL");
-    @test length(relevantFiles) == 746 # this is going to change day-by-day
-    @test exampleFile == relevantFiles[737]
+    @test length(relevantFiles) == 5
+    @test exampleFile == relevantFiles[3]
 end
 
 @testset ExtendedTestSet "Convert AlphaVantage TIME_SERIES_DAILY file into Vector{OhlcvBar}" begin
