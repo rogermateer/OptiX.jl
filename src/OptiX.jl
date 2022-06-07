@@ -87,4 +87,38 @@ function convertAlphaVantageTimeSeriesDaily(json::JSON3.Object)::Vector{OhlcvBar
 end
 export convertAlphaVantageTimeSeriesDaily
 
+"""
+
+Convert an AlphaVantage TIME_SERIES_INTRADAY bar into our generic
+internal form
+
+"""
+function convertAlphaVantageTimeSeriesIntradayBar(key::Symbol,value::JSON3.Object)::OhlcvBar
+    return JSON3.read("""{
+    "timestamp":"$(DateTime(String(key),DateFormat("y-m-d H:M:S")))",
+    "open":$(value["1. open"]),
+    "high":$(value["2. high"]),
+    "low":$(value["3. low"]),
+    "close":$(value["4. close"]),
+    "volume":$(value["5. volume"])
+}""",OhlcvBar)
+end
+export convertAlphaVantageTimeSeriesIntradayBar
+
+"""
+
+Convert all bars of an AlphaVantage TIME_SERIES_INTRADAY call into a
+Vector of bars of our generic internal form
+
+"""
+function convertAlphaVantageTimeSeriesIntraday(json::JSON3.Object)::Vector{OhlcvBar}
+    bars = OhlcvBar[]
+    data = json["Time Series (1min)"]
+    for key in sort(collect(keys(data)))
+        push!(bars,convertAlphaVantageTimeSeriesIntradayBar(key,data[key]))
+    end
+    return bars
+end
+export convertAlphaVantageTimeSeriesIntraday
+
 end # module
