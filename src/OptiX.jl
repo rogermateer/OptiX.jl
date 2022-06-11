@@ -121,4 +121,86 @@ function convertAlphaVantageTimeSeriesIntraday(json::JSON3.Object)::Vector{Ohlcv
 end
 export convertAlphaVantageTimeSeriesIntraday
 
+"""
+
+Synthesize an OhlcvBar using values hashed on timestamp
+
+"""
+function synthesizeOhlcvBar(timestamp::DateTime)::OhlcvBar
+
+    # this is done to allow high and low to be assigned the largest
+    # and smallest of the four generated values, as we expect them to
+    # be
+    ohlc = sort([
+        Float64(hash("0 $timestamp"))%1000000/100.0,
+        Float64(hash("1 $timestamp"))%1000000/100.0,
+        Float64(hash("2 $timestamp"))%1000000/100.0,
+        Float64(hash("3 $timestamp"))%1000000/100.0,
+    ])
+
+    volume = Int64(hash("volume $timestamp")/2)
+
+    return JSON3.read("""{
+    "timestamp":"$(timestamp)",
+    "open":$(ohlc[2]),
+    "high":$(ohlc[4]),
+    "low":$(ohlc[1]),
+    "close":$(ohlc[3]),
+    "volume":$(volume)
+}""",OhlcvBar)
+end
+export synthesizeOhlcvBar
+
+"""
+
+Leverage synthesizeOhlcvBar to synthesize a Vector(OhlcvBar) given a range of timestamps
+
+"""
+function synthesizeOhlcvBars(timestamps::Vector{DateTime})::Vector{OhlcvBar}
+    return map(synthesizeOhlcvBar,timestamps)
+end
+export synthesizeOhlcvBars
+
+"""
+
+Create a range of timestamps given a start, stop, and step (eg Dates.Day(1))
+
+"""
+function createTimestamps(start::DateTime,stop::DateTime,step::Period)::Vector{DateTime}
+    return collect(start:step:stop)
+end
+export createTimestamps
+
+"""
+
+Serialize Vector{OhlcvBar} to a file
+
+"""
+function serializeOhlcvBars(filePath::String,bars::Vector{OhlcvBar})
+    open(filePath,"w") do io
+        JSON3.pretty(io,bars)
+    end
+
+end
+export serializeOhlcvBars
+
+"""
+
+Deserialize file to Vector{OhlcvBar}
+
+"""
+function deserializeOhlcvBars(filePath::String)::Vector{OhlcvBar}
+    json_string = read(filePath,String)
+    return JSON3.read(json_string,Vector{OhlcvBar})
+end
+export deserializeOhlcvBars
+
+# Pretty print Vector{OhlcvBar} to String
+function prettyStringOhlcvBars(bars::Vector{OhlcvBar})::String
+    io = IOBuffer()
+    JSON3.pretty(io,bars)
+    return String(take!(io))
+end
+export prettyStringOhlcvBars
+
 end # module
