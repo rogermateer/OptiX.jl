@@ -43,3 +43,12 @@ end
     @test prettyStringOhlcvBars(BARS) == prettyStringOhlcvBars(bars)
 
 end
+
+@testset ExtendedTestSet "Merge two sorted Vector{OhlcvBar}s into one sorted Vector{OhlcvBar}" begin
+    barsOdd = synthesizeOhlcvBars(createTimestamps(DateTime("2022-05-01"),DateTime("2022-06-01"),Dates.Day(2)))
+    barsEven = synthesizeOhlcvBars(createTimestamps(DateTime("2022-05-02"),DateTime("2022-06-01"),Dates.Day(2)))
+    bars = synthesizeOhlcvBars(createTimestamps(DateTime("2022-05-01"),DateTime("2022-06-01"),Dates.Day(1)))
+    @test prettyStringOhlcvBars(mergeBars(barsOdd,barsEven)) == prettyStringOhlcvBars(bars)
+    @test prettyStringOhlcvBars(mergeBars(barsEven,barsOdd)) == prettyStringOhlcvBars(bars)
+    @test prettyStringOhlcvBars(mergeBars([barsEven...,barsOdd...],barsOdd)) == prettyStringOhlcvBars(bars)
+end

@@ -195,12 +195,35 @@ function deserializeOhlcvBars(filePath::String)::Vector{OhlcvBar}
 end
 export deserializeOhlcvBars
 
-# Pretty print Vector{OhlcvBar} to String
+"""
+
+Pretty print Vector{OhlcvBar} to String
+
+"""
 function prettyStringOhlcvBars(bars::Vector{OhlcvBar})::String
     io = IOBuffer()
     JSON3.pretty(io,bars)
-    return String(take!(io))
+    return replace(String(take!(io)), "\"" => "'")
 end
 export prettyStringOhlcvBars
+
+"""
+
+Comparison predicate for sorting OhlcvBar s
+
+"""
+function Base.isless(a::OhlcvBar,b::OhlcvBar)::Bool
+    return isless(a.timestamp,b.timestamp)
+end
+
+"""
+
+Merge two Vector{OhlcvBar}s into one sorted Vector{OhlcvBar} without duplicates
+
+"""
+function mergeBars(a::Vector{OhlcvBar},b::Vector{OhlcvBar})::Vector{OhlcvBar}
+    return sort(collect(Set([a...,b...])))
+end
+export mergeBars
 
 end # module
