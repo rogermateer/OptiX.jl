@@ -52,3 +52,22 @@ end
     @test prettyStringOhlcvBars(mergeBars(barsEven,barsOdd)) == prettyStringOhlcvBars(bars)
     @test prettyStringOhlcvBars(mergeBars([barsEven...,barsOdd...],barsOdd)) == prettyStringOhlcvBars(bars)
 end
+
+@testset ExtendedTestSet "Accumulate Vector{OhlcvBars} from a collection of gzipped JSON files into a single human-readable file" begin
+
+    # start with an empty accumulation file for the purposes of this test
+    accumulationFile = "../data/Accumulation.AAPL.json"
+    serializeOhlcvBars(accumulationFile,OhlcvBar[])
+    @test length(deserializeOhlcvBars(accumulationFile)) == 0
+
+    filesToAccumulate = findFiles("../data","AlphaVantage","TIME_SERIES_DAILY","AAPL")
+    converter = convertAlphaVantageTimeSeriesDaily
+    accumulateOhlcvBars(accumulationFile,converter,filesToAccumulate)
+    @test length(deserializeOhlcvBars(accumulationFile)) == 5682
+
+    filesToAccumulate = findFiles("../data","AlphaVantage","TIME_SERIES_INTRADAY","AAPL")
+    converter = convertAlphaVantageTimeSeriesIntraday
+    accumulateOhlcvBars(accumulationFile,converter,filesToAccumulate)
+    @test length(deserializeOhlcvBars(accumulationFile)) == 16071
+    
+end

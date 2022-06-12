@@ -218,6 +218,29 @@ end
 
 """
 
+Equality predicate for OhlcvBar s
+
+"""
+function Base.isequal(a::OhlcvBar,b::OhlcvBar)::Bool
+    return ((a.timestamp == b.timestamp)
+            && (a.open == b.open)
+            && (a.high == b.high)
+            && (a.low == b.low)
+            && (a.close == b.close)
+            && (a.volume == b.volume))
+end
+
+"""
+
+hash function for OhlcvBar s
+
+"""
+function Base.hash(x::OhlcvBar)::UInt
+    return hash(x.timestamp,hash(x.open,hash(x.high,hash(x.low,hash(x.close,hash(x.volume))))))
+end
+
+"""
+
 Merge two Vector{OhlcvBar}s into one sorted Vector{OhlcvBar} without duplicates
 
 """
@@ -225,5 +248,31 @@ function mergeBars(a::Vector{OhlcvBar},b::Vector{OhlcvBar})::Vector{OhlcvBar}
     return sort(collect(Set([a...,b...])))
 end
 export mergeBars
+
+"""
+
+Use deserializeOhlcvBars, serializeOhlcvBars, and mergeBars to create
+the ability to read a collection of gzipped JSON files and merge their
+contents into a single Vector{OhlcvBar} file
+
+"""
+function accumulateOhlcvBars(accumulationFile::String,converter::Function,filesToAccumulate::Vector{String})
+
+    # read the contents of the accumulation file from disk
+    accumulatedBars = deserializeOhlcvBars(accumulationFile)
+
+    # read each of the filesToAccumulate (a collection of gzipped JSON
+    # files) in turn, accumulating their contents into the contents of
+    # the accumulation file
+    for fileToAccumulate ∈ filesToAccumulate
+        fileBars = converter(readGZippedJson(fileToAccumulate))
+        accumulatedBars = mergeBars(accumulatedBars,fileBars)
+    end
+
+    # write the contents of the accumulation file back to disk
+    serializeOhlcvBars(accumulationFile,accumulatedBars)
+
+end
+export accumulateOhlcvBars
 
 end # module
