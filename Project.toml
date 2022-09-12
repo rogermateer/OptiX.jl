@@ -8,6 +8,7 @@ Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 GZip = "92fee26a-97fe-5a0c-ad85-20a5f3185b63"
 JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 StructTypes = "856f2bd8-1eba-4b0a-8007-ebc267875bd4"
 TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
 
