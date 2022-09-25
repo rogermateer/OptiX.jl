@@ -6,8 +6,8 @@ using SafeTestsets
 
 @testset ExtendedTestSet "Common" begin
     @safetestset "Read a GZipped JSON file" begin
-        include("../src/common.jl")
-        json = readGZippedJson(exampleDailyFile)
+        using OptiX
+        json = readGZippedJson(exampleFile.daily)
         @test (length(json["Time Series (Daily)"])) == 5680
     end
 end

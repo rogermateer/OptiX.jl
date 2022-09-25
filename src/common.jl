@@ -2,7 +2,15 @@ using Reexport
 @reexport using JSON3
 @reexport using GZip
 
-exampleDailyFile = "../data/2022/05/27/AlphaVantage.TIME_SERIES_DAILY.AAPL.2022-05-27.json.gz"
+exampleFile = (
+    daily = "../data/2022/05/27/AlphaVantage.TIME_SERIES_DAILY.AAPL.2022-05-27.json.gz",
+    intraday = "../data/2022/05/27/AlphaVantage.TIME_SERIES_INTRADAY.AAPL.2022-05-27.json.gz",
+    accumulation = "../data/Accumulation.json",
+    transactionV1 = "../data/2022/08/14/EasyEquities.EURtransactions.2022-08-14.json.gz",
+    transactionV2 = "../data/2022/08/24/EasyEquities.EURtransactions.2022-08-24.json.gz",
+    transactionV3 = "../data/2022/09/10/EasyEquities.EURtransactions.2022-09-10.json.gz",
+)
+export exampleFile
 
 """
 
@@ -38,4 +46,3 @@ function readGZippedJson(filePath::String)::Union{JSON3.Object,JSON3.Array}
     end
 end
 export readGZippedJson
-

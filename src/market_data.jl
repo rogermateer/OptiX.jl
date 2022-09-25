@@ -2,12 +2,6 @@ using Reexport
 @reexport using Dates
 import StructTypes
 
-exampleDailyFile = "../data/2022/05/27/AlphaVantage.TIME_SERIES_DAILY.AAPL.2022-05-27.json.gz"
-exampleIntradayFile = "../data/2022/05/27/AlphaVantage.TIME_SERIES_INTRADAY.AAPL.2022-05-27.json.gz"
-exampleAccumulationFile = "../data/Accumulation.json"
-
-include("common.jl")
-
 """
 
 Internal representation of generic time series data

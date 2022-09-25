@@ -9,40 +9,40 @@ using SafeTestsets
 @testset ExtendedTestSet "Market Data" begin
 
     @safetestset "Find all relevant time series files" begin
-        include("../src/market_data.jl")
+        using OptiX
         relevantFiles = findFiles("../data","AlphaVantage","TIME_SERIES_DAILY","AAPL")
         @test length(relevantFiles) == 5
-        @test exampleDailyFile == relevantFiles[3]
+        @test exampleFile.daily == relevantFiles[3]
     end
-
+    
     @safetestset "Convert AlphaVantage TIME_SERIES_DAILY file into Vector{OhlcvBar}" begin
-        include("../src/market_data.jl")
-        json = readGZippedJson(exampleDailyFile)
+        using OptiX
+        json = readGZippedJson(exampleFile.daily)
         bars = convertAlphaVantageTimeSeriesDaily(json)
         @test length(bars) == 5680
     end
 
     @safetestset "Convert AlphaVantage TIME_SERIES_INTRADAY file into Vector{OhlcvBar}" begin
-        include("../src/market_data.jl")
-        json = readGZippedJson(exampleIntradayFile)
+        using OptiX
+        json = readGZippedJson(exampleFile.intraday)
         bars = convertAlphaVantageTimeSeriesIntraday(json)
         @test length(bars) == 8601
     end
 
     @safetestset "Serialize and deserialize Vector{OhlcvBar} to a human-readable file" begin
-        include("../src/market_data.jl")
+        using OptiX
         # synthesize a Vector{OhlcvBar} with contents hashed on supplied timestamps
         bars = synthesizeOhlcvBars(createTimestamps(DateTime("2022-05-01"),DateTime("2022-06-01"),Dates.Day(1)))
         # serialize it
-        serializeOhlcvBars(exampleAccumulationFile,bars)
+        serializeOhlcvBars(exampleFile.accumulation,bars)
         # deserialize it
-        BARS = deserializeOhlcvBars(exampleAccumulationFile)
+        BARS = deserializeOhlcvBars(exampleFile.accumulation)
         # verify that the result is the same as the original Vector{OhlcvBar}
         @test prettyStringOhlcvBars(BARS) == prettyStringOhlcvBars(bars)
     end
 
     @safetestset "Merge two sorted Vector{OhlcvBar}s into one sorted Vector{OhlcvBar}" begin
-        include("../src/market_data.jl")
+        using OptiX
         barsOdd = synthesizeOhlcvBars(createTimestamps(DateTime("2022-05-01"),DateTime("2022-06-01"),Dates.Day(2)))
         barsEven = synthesizeOhlcvBars(createTimestamps(DateTime("2022-05-02"),DateTime("2022-06-01"),Dates.Day(2)))
         bars = synthesizeOhlcvBars(createTimestamps(DateTime("2022-05-01"),DateTime("2022-06-01"),Dates.Day(1)))
@@ -52,8 +52,8 @@ using SafeTestsets
     end
 
     @safetestset "Accumulate Vector{OhlcvBars} from a collection of gzipped JSON files into a single human-readable file" begin
-        include("../src/market_data.jl")
-
+        using OptiX
+        
         # start with an empty accumulation file for the purposes of this test
         accumulationFile = "../data/Accumulation.AAPL.json"
         serializeOhlcvBars(accumulationFile,OhlcvBar[])
@@ -69,5 +69,5 @@ using SafeTestsets
         accumulateOhlcvBars(accumulationFile,converter,filesToAccumulate)
         @test length(deserializeOhlcvBars(accumulationFile)) == 16071
     end
-  
+    
 end

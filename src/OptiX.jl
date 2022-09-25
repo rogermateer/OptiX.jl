@@ -7,6 +7,6 @@ import StructTypes
 
 include("common.jl")
 include("market_data.jl")
-
+include("portfolio_data.jl")
 
 end # module
